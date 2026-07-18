@@ -2,7 +2,7 @@ using RentApp.Domain.Entities.Payments;
 
 namespace RentApp.Domain.Repositories
 {
-    public interface IRefundRepository : IBaseRepository<Refund>
+    public interface ICouponRepository : IBaseRepository<Coupon>
     {
     }
 }

@@ -1,6 +1,17 @@
-namespace RentApp.Domain.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using RentApp.Domain.Common;
 
-public interface IBaseRepository
+namespace RentApp.Domain.Repositories
 {
-    
+    public interface IBaseRepository<T> where T : AggregateRoot
+    {
+        Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
+        void Update(T entity);
+        void Delete(T entity);
+    }
 }
