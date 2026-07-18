@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="RentApp.Application/RentApp.Application.csproj" Id="0d7c1115-7da6-49d1-a312-6464bb343a8a" />
+    <Project Path="RentApp.Domain/RentApp.Domain.csproj" Id="c2d3591a-0a8e-4b81-95b0-892ad03a5ce1" />
+    <Project Path="RentApp.Infrastructure/RentApp.Infrastructure.csproj" Id="366a38b2-ee7d-471f-a94c-5c276ac0eb98" />
+    <Project Path="RentApp.Persistence/RentApp.Persistence.csproj" Id="3ba1c86f-70f4-414c-8e32-502ef2700bd5" />
+    <Project Path="RentApp.Presentation/RentApp.Presentation.csproj" Id="7804dddf-d552-42f6-8372-d6bde0feebcc" />
+  </Folder>
+</Solution>
