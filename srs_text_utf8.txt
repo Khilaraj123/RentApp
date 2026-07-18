@@ -1,0 +1,767 @@
+RentSpace
+Modern Rental Marketplace Platform
+Software Architecture Document (SAD) & Software Requirements Specification (SRS)
+Version 1.0
+Prepared for: Engineering & Product Stakeholders
+Architecture: ASP.NET Core MVC · Clean Architecture · Domain-Driven Design
+Date: July 17, 2026
+Document Control
+Field
+Detail
+Document Title
+RentSpace SAD / SRS
+Version
+1.0
+Status
+Draft for Review
+Architecture Style
+Clean Architecture (Onion) + Domain-Driven Design
+Primary Stack
+ASP.NET Core MVC, EF Core, SQL Server, Hangfire
+Target Audience
+Product Owners, Architects, Backend/Frontend Engineers, QA
+Table of Contents
+1. Introduction
+1.1 Purpose
+This document defines the Software Requirements Specification (SRS) and Software Architecture Document (SAD) for RentSpace, a modern, general-purpose rental marketplace that enables owners to list and lend items (vehicles, rooms, electronics, tools, cameras, apparel, party equipment, and more) and enables customers to discover, book, and pay for rentals. It specifies the functional and non-functional requirements, the architectural approach, the domain model, and the technology choices that will guide design, implementation, and testing.
+1.2 Scope
+RentSpace is a web-based platform built with ASP.NET Core MVC following Clean Architecture and Domain-Driven Design (DDD) principles. The platform supports the full rental lifecycle: listing creation, search and discovery, booking and availability management, payments and security deposits, messaging, notifications, reviews, dispute resolution, and administrative oversight. The system is designed to scale from a focused MVP to an extensible platform supporting dynamic pricing, AI-assisted features, and progressive web app (PWA) capabilities.
+1.3 Definitions, Acronyms, and Abbreviations
+Term
+Definition
+DDD
+Domain-Driven Design — a design approach that models software around the business domain
+SAD
+Software Architecture Document
+SRS
+Software Requirements Specification
+MVP
+Minimum Viable Product
+Aggregate
+A cluster of domain objects treated as a single unit for data changes
+Bounded Context
+An explicit boundary within which a domain model applies
+PWA
+Progressive Web App
+KYC
+Know Your Customer (identity verification)
+1.4 References
+Source feature specification: RentSpace Rental Marketplace Feature Brief
+ASP.NET Core Documentation — https://learn.microsoft.com/aspnet/core
+Domain-Driven Design, Eric Evans (2003)
+Clean Architecture, Robert C. Martin (2017)
+1.5 Document Overview
+Section 2 describes the overall product context and user classes. Section 3 presents the system architecture. Section 4 defines the domain model. Section 5 lists functional requirements by module. Section 6 defines non-functional requirements. Section 7 documents key workflows. Section 8 covers external interfaces. Section 9 defines MVP scope, and Section 10 lists future/advanced features.
+2. Overall Description
+2.1 Product Perspective
+RentSpace is a standalone, self-contained marketplace platform, comparable in spirit to Airbnb or Facebook Marketplace but generalized for renting almost any physical item. It is composed of a server-side ASP.NET Core MVC application exposing web UI and APIs, a relational data store, background job processing (Hangfire), and integrations with payment gateways, maps, and notification channels.
+2.2 Architectural Style
+The system follows Clean Architecture, organizing code into concentric layers (Domain, Application, Infrastructure, Presentation) with dependencies pointing inward, combined with DDD tactical patterns (aggregates, entities, value objects, domain events, repositories) to keep business rules isolated from frameworks and delivery mechanisms.
+2.3 User Classes and Characteristics
+Role
+Description
+Guest
+Unauthenticated visitor who can browse listings and search, but cannot book or message
+Customer (Renter)
+Registered user who searches, books, pays for, and reviews rentals
+Owner (Lender)
+Registered user who creates listings, manages availability, and fulfills bookings
+Admin
+Manages users, listings, categories, payments, disputes, and platform configuration
+Moderator (optional)
+Reviews reported content and pending listings on behalf of Admin
+2.4 Operating Environment
+Server: ASP.NET Core (cross-platform), deployable on Linux or Windows containers
+Database: SQL Server (or PostgreSQL) via Entity Framework Core
+Client: Responsive web (desktop and mobile browsers), installable as a PWA
+Background processing: Hangfire with a persistent job store
+Cloud/File storage: Object storage (e.g., Azure Blob Storage or S3-compatible)
+2.5 Design and Implementation Constraints
+Domain layer must have no dependency on ASP.NET Core, EF Core, or any infrastructure package
+All monetary values represented via a Money value object (amount + currency) to avoid float rounding errors
+Local payment gateways (eSewa, Khalti) required in addition to Stripe/credit card, reflecting a Nepal-aware market
+Availability and booking conflict checks must be transactionally consistent to prevent double-booking
+2.6 Assumptions and Dependencies
+Third-party services (Stripe, eSewa, Khalti, mapping provider, email/SMS provider) are available and contractually accessible
+Users have access to a modern browser or mobile device supporting PWA installation
+Identity documents submitted for verification are reviewed by human admins, not fully automated at MVP stage
+3. System Architecture
+3.1 Architectural Overview
+The application is structured into four layers, each with a single responsibility and a strict, inward-facing dependency rule: outer layers may depend on inner layers, never the reverse.
+Layer
+Responsibility
+Depends On
+Domain
+Entities, aggregates, value objects, domain events, domain services, repository interfaces
+Nothing (pure business logic)
+Application
+Use cases / application services, DTOs, validation, orchestration, interfaces for infrastructure (payment, storage, email)
+Domain
+Infrastructure
+EF Core persistence, repository implementations, payment gateway clients, file storage, Hangfire jobs, external API clients
+Application, Domain
+Presentation (Web/API)
+ASP.NET Core MVC controllers, Razor views/React front end, view models, API endpoints, authentication middleware
+Application
+3.2 High-Level Component View
+Major runtime components and their interactions:
+Web/API Host — ASP.NET Core MVC application serving controllers, views, and REST/JSON endpoints
+Application Services — orchestrate use cases such as CreateListing, RequestBooking, ProcessPayment, ReleaseDeposit
+Domain Model — Listing, Booking, Payment, Review, Dispute, and other aggregates enforcing business invariants
+Persistence — EF Core DbContext and repositories backed by a relational database
+Background Worker (Hangfire) — scheduled and recurring jobs (reminders, auto-cancel, refunds, reports)
+Notification Gateway — abstracts email, SMS/push, and in-app notification channels
+Payment Gateway Adapter — abstracts Stripe, eSewa, Khalti, and cash-on-pickup flows behind a common interface
+Messaging Hub — real-time chat via SignalR (WebSockets) between renters and owners
+File/Media Storage — stores listing images, videos, identity documents, and generated rental agreements
+3.3 Technology Stack
+Concern
+Technology
+Web framework
+ASP.NET Core MVC (.NET 8+)
+ORM / persistence
+Entity Framework Core, SQL Server or PostgreSQL
+Real-time messaging
+SignalR
+Background jobs
+Hangfire
+Authentication
+ASP.NET Core Identity + OAuth (Google), JWT for API clients
+Payments
+Stripe SDK, eSewa API, Khalti API
+Search
+Full-text/EF query filters at MVP; Elasticsearch or Azure Cognitive Search for scale
+Maps
+Google Maps / Mapbox API
+File storage
+Azure Blob Storage / S3-compatible object storage
+Front end
+Razor Views or React SPA, PWA manifest & service worker
+PDF generation
+QuestPDF or similar, for rental agreements
+Containerization
+Docker; orchestration via Kubernetes or Azure App Service
+3.4 Cross-Cutting Concerns
+Logging & monitoring: structured logging (Serilog) with centralized log aggregation
+Caching: distributed cache (Redis) for search results and availability lookups
+Validation: FluentValidation at the Application layer boundary
+Security: role-based and policy-based authorization, encrypted secrets, rate limiting
+Localization: multi-currency and multi-language support (starting with English and Nepali)
+4. Domain Model (DDD)
+4.1 Bounded Contexts
+Identity & Access — users, roles, authentication, verification
+Catalog — listings, categories, pricing, availability
+Booking — reservations, calendar, conflict resolution
+Payments & Finance — payments, deposits, refunds, commission
+Engagement — messaging, notifications, reviews, wishlist
+Trust & Safety — disputes, reports, identity verification
+4.2 Aggregates and Entities
+Aggregate Root
+Key Child Entities / Value Objects
+Purpose
+User
+Address, IdentityDocument, Rating
+Represents guests, customers, owners, admins, and moderators
+Listing
+ListingImage, AvailabilityRule, PricingRule
+Represents a rentable item with pricing, media, and availability
+Booking
+BookingItem, RentalPeriod
+Represents a reservation request and its lifecycle
+Payment
+—
+Represents a payment transaction and its status
+Review
+—
+Represents ratings/feedback between renter and owner
+Conversation
+Message
+Represents a chat thread between two users
+Notification
+—
+Represents an in-app/email/push alert
+Category
+—
+Represents the taxonomy of rentable item types
+Dispute
+Evidence
+Represents a conflict requiring admin resolution
+Refund
+—
+Represents a refund transaction linked to a payment
+Coupon
+—
+Represents discount/referral/promotion codes
+RentalAgreement
+—
+Represents the generated, signable rental contract
+VerificationRequest
+—
+Represents a submitted identity document pending review
+CommissionTransaction
+—
+Represents platform fee/commission accounting entries
+4.3 Supporting Value Objects
+Money — amount + currency, immutable, arithmetic-safe
+Address — street, city, region, postal code, country
+GeoLocation — latitude, longitude
+DateRange / RentalPeriod — start and end date/time with validation
+4.4 Domain Events
+Event
+Raised When
+Typical Reaction
+ListingPublishedEvent
+An owner's listing passes review and goes live
+Index listing for search, notify followers
+BookingRequestedEvent
+A renter submits a booking request
+Notify owner, hold requested dates
+BookingConfirmedEvent
+Owner approves / instant booking succeeds
+Notify renter, trigger payment collection
+PaymentSucceededEvent
+A payment is captured successfully
+Confirm booking, schedule reminders
+ItemPickedUpEvent
+Renter collects the item
+Start rental period, notify owner
+ItemReturnedEvent
+Renter returns the item
+Trigger inspection, start deposit release timer
+SecurityDepositReleasedEvent
+Inspection completes without issue
+Refund deposit, close booking
+ReviewSubmittedEvent
+A user submits a review
+Update aggregate rating, notify reviewee
+DisputeOpenedEvent
+A user files a dispute
+Freeze related funds, notify admin queue
+5. Functional Requirements
+Requirements are grouped by module. Priority: M = Must-have (MVP), S = Should-have, C = Could-have (future).
+5.1 Authentication & Account Management
+ID
+Requirement
+Description
+Priority
+FR-1.1
+Email/password registration & login
+Users register and authenticate with email and password, with hashed credential storage
+M
+FR-1.2
+Google OAuth login
+Users may sign in using a Google account
+M
+FR-1.3
+Email verification
+New accounts must verify their email address before full access
+M
+FR-1.4
+Phone verification
+Optional SMS-based phone number verification
+S
+FR-1.5
+Forgot / reset password
+Users can request a secure password reset link
+M
+FR-1.6
+Two-factor authentication
+Optional TOTP or SMS-based 2FA for account security
+S
+FR-1.7
+Profile management
+Users can edit profile details and manage account settings
+M
+5.2 User Profiles
+ID
+Requirement
+Description
+Priority
+FR-2.1
+Public profile page
+Displays photo, name, bio, rating, reviews, join date, listings, response rate/time
+M
+FR-2.2
+Identity & government ID verification
+Users upload ID documents for admin-reviewed KYC
+S
+FR-2.3
+Rental history summary
+Profile shows completed rental count and history highlights
+M
+5.3 Listing Management
+ID
+Requirement
+Description
+Priority
+FR-3.1
+Create/edit listing
+Owners define title, description, category, brand, model, condition, year, quantity, media, price
+M
+FR-3.2
+Flexible rental pricing
+Support per-hour, per-day, per-week, per-month pricing
+M
+FR-3.3
+Availability management
+Owners set available/blocked dates and min/max rental duration
+M
+FR-3.4
+Pickup/delivery options
+Owners specify pickup-only, delivery, or shipping availability
+M
+FR-3.5
+Location capture
+Listings store address, map location, latitude/longitude
+M
+FR-3.6
+Rental policies
+Owners define deposit, cancellation, late fee, and damage policies
+M
+FR-3.7
+Listing lifecycle
+Listings move through Draft, Pending Approval, Published, Hidden, Archived
+M
+5.4 Categories
+ID
+Requirement
+Description
+Priority
+FR-4.1
+Category taxonomy
+Admin creates/edits hierarchical categories (vehicles, apartments, electronics, etc.)
+M
+FR-4.2
+Category assignment
+Every listing must belong to at least one category
+M
+5.5 Search & Discovery
+ID
+Requirement
+Description
+Priority
+FR-5.1
+Multi-criteria search
+Search by keyword, category, price range, distance, rating, availability, city, owner, delivery, instant booking, condition
+M
+FR-5.2
+Sorting options
+Sort by newest, price (asc/desc), nearest, most rented, highest rated
+M
+FR-5.3
+Search performance
+Search results return within acceptable latency at target scale (see NFR)
+M
+5.6 Booking System
+ID
+Requirement
+Description
+Priority
+FR-6.1
+Booking request
+Renter selects rental period, pickup time, delivery option, and quantity
+M
+FR-6.2
+Availability & conflict checks
+System validates availability, prevents conflicts, and checks remaining quantity
+M
+FR-6.3
+Booking status lifecycle
+Booking transitions through Pending, WaitingPayment, Confirmed, PickedUp, Active, Returned, Completed, Cancelled, Rejected, Expired
+M
+FR-6.4
+Owner approval workflow
+Owners can approve or reject non-instant bookings
+M
+5.7 Calendar
+ID
+Requirement
+Description
+Priority
+FR-7.1
+Owner calendar view
+Owners view upcoming rentals, reserved dates, available dates, and maintenance periods
+M
+FR-7.2
+Renter availability view
+Renters view a listing's available calendar before booking
+M
+5.8 Payments
+ID
+Requirement
+Description
+Priority
+FR-8.1
+Multiple payment methods
+Support credit card (Stripe), eSewa, Khalti, and cash on pickup
+M
+FR-8.2
+Payment status tracking
+Payments tracked as Pending, Paid, Failed, Refunded, PartiallyRefunded
+M
+FR-8.3
+Secure transaction handling
+Payment data handled per PCI-DSS via gateway tokenization (no raw card storage)
+M
+5.9 Security Deposit
+ID
+Requirement
+Description
+Priority
+FR-9.1
+Deposit configuration
+Owners configure a fixed or percentage-based deposit per listing
+M
+FR-9.2
+Deposit release
+Deposit refunds after successful return and inspection completion
+M
+5.10 Messaging
+ID
+Requirement
+Description
+Priority
+FR-10.1
+Real-time chat
+Renters and owners exchange real-time messages tied to a listing/booking
+M
+FR-10.2
+Rich messaging features
+Support image/attachment sharing, read receipts, and typing indicators
+S
+FR-10.3
+Push notification on new message
+Users are notified of new messages when offline
+M
+5.11 Notifications
+ID
+Requirement
+Description
+Priority
+FR-11.1
+Multi-channel delivery
+Deliver notifications via in-app, email, and push
+M
+FR-11.2
+Event coverage
+Notify on booking request/approval/rejection, payment received, return reminder, late return, new review, listing approval/rejection, refund completion
+M
+5.12 Reviews & Ratings
+ID
+Requirement
+Description
+Priority
+FR-12.1
+Bidirectional reviews
+Renters review owners and owners review renters after a completed booking
+M
+FR-12.2
+Multi-dimensional rating
+Ratings capture communication, item quality, accuracy, delivery, and overall score
+M
+5.13 Wishlist
+ID
+Requirement
+Description
+Priority
+FR-13.1
+Save favorites
+Users save listings to a personal wishlist
+M
+FR-13.2
+Wishlist alerts
+Users are notified of price changes or renewed availability for wishlisted items
+S
+5.14 Rental History
+ID
+Requirement
+Description
+Priority
+FR-14.1
+History views
+Users view past, current, upcoming, cancelled, and completed rentals
+M
+5.15 Owner Dashboard
+ID
+Requirement
+Description
+Priority
+FR-15.1
+Owner statistics
+Show revenue, active listings, upcoming rentals, pending requests, monthly income, occupancy rate
+M
+FR-15.2
+Owner charts
+Visualize revenue, rentals, and popular items over time
+S
+5.16 Admin Dashboard
+ID
+Requirement
+Description
+Priority
+FR-16.1
+Entity management
+Admin manages users, listings, categories, bookings, payments, reviews, and reports
+M
+FR-16.2
+Platform analytics
+Admin views total users, active owners/renters, revenue, commission, and top listings
+M
+5.17 Reports & Moderation
+ID
+Requirement
+Description
+Priority
+FR-17.1
+User reporting
+Users report fake listings, scams, abuse, damage, or fraud
+M
+FR-17.2
+Admin investigation workflow
+Admin reviews and resolves submitted reports
+M
+5.18 Identity Verification
+ID
+Requirement
+Description
+Priority
+FR-18.1
+Document upload
+Users upload passport, driver's license, or national ID
+S
+FR-18.2
+Admin approval
+Admin reviews and approves/rejects verification submissions
+S
+5.19 Dispute Resolution
+ID
+Requirement
+Description
+Priority
+FR-19.1
+Dispute filing
+Users open disputes for damage, missing items, refund, or deposit issues
+M
+FR-19.2
+Evidence submission
+Disputes accept photos, chat logs, and documents as evidence
+M
+5.20 Coupons & Promotions
+ID
+Requirement
+Description
+Priority
+FR-20.1
+Discount codes
+Admin/owners issue discount and referral codes
+C
+FR-20.2
+Promotions
+Time-bound promotional campaigns applied at checkout
+C
+5.21 Commission System
+ID
+Requirement
+Description
+Priority
+FR-21.1
+Commission configuration
+Platform charges a fixed fee or percentage commission per booking
+M
+5.22 Refund System
+ID
+Requirement
+Description
+Priority
+FR-22.1
+Automatic/manual refunds
+Support automatic and manually approved refunds
+M
+FR-22.2
+Partial refunds & deposit deduction
+Refunds may be partial and account for deposit deductions
+M
+5.23 Rental Agreement
+ID
+Requirement
+Description
+Priority
+FR-23.1
+PDF agreement generation
+System auto-generates a rental agreement PDF with parties, dates, terms, deposit, and signatures
+S
+5.24 File Management
+ID
+Requirement
+Description
+Priority
+FR-24.1
+Media & document storage
+Store listing images/videos, identity documents, and agreements in object storage
+M
+5.25 Map Integration
+ID
+Requirement
+Description
+Priority
+FR-25.1
+Location display
+Show pickup location, nearby rentals, and delivery radius on a map
+M
+5.26 Availability Engine
+ID
+Requirement
+Description
+Priority
+FR-26.1
+Conflict prevention
+Automatically prevent double bookings, quantity overflow, and maintenance conflicts
+M
+5.27 Background Jobs
+ID
+Requirement
+Description
+Priority
+FR-27.1
+Scheduled processing
+Use Hangfire for reminder emails, return reminders, auto-cancel unpaid bookings, deposit refunds, listing expiry, and monthly reports
+M
+5.28 SEO
+ID
+Requirement
+Description
+Priority
+FR-28.1
+Search-engine optimization
+Provide slugs, meta tags, sitemap, Open Graph tags, and structured data
+S
+5.29 PWA Support
+ID
+Requirement
+Description
+Priority
+FR-29.1
+Offline & installable app
+Provide offline caching, installability, and push notifications via service worker
+C
+6. Non-Functional Requirements
+6.1 Performance
+Search queries should return results within 500ms at p95 for catalogs up to 1M listings (with indexing/caching)
+Booking availability checks must complete within 200ms to support real-time UI feedback
+6.2 Scalability
+Stateless web layer to allow horizontal scaling behind a load balancer
+Read-heavy search workloads offloaded to a dedicated search index (e.g., Elasticsearch) as usage grows
+6.3 Security
+All traffic served over HTTPS/TLS 1.2+
+Role-based and resource-based authorization enforced at the Application layer
+Sensitive data (identity documents, payment tokens) encrypted at rest
+Input validation and output encoding to mitigate injection and XSS
+6.4 Availability & Reliability
+Target 99.9% uptime for core booking and payment flows
+Idempotent payment processing to avoid double charges on retries
+6.5 Usability
+Responsive design supporting mobile, tablet, and desktop breakpoints
+Accessible UI conforming to WCAG 2.1 AA where practical
+6.6 Maintainability
+Clean Architecture boundaries enforced via project references and architecture tests
+Automated unit and integration test coverage for domain and application layers
+6.7 Compliance
+Payment processing aligned with PCI-DSS via certified gateways (no raw card data stored)
+Data handling aligned with applicable data protection regulations for user PII and identity documents
+7. Key Workflows
+7.1 Booking Status Lifecycle
+Status
+Meaning
+Pending
+Booking requested, awaiting owner approval or system confirmation
+WaitingPayment
+Approved but payment not yet completed
+Confirmed
+Payment received and booking locked in
+PickedUp
+Renter has collected the item
+Active
+Rental period is currently in progress
+Returned
+Item has been returned, pending inspection
+Completed
+Booking fully closed, deposit settled
+Cancelled
+Booking cancelled by renter or owner
+Rejected
+Owner declined the booking request
+Expired
+Booking request timed out without action
+7.2 Payment Status Lifecycle
+Status
+Meaning
+Pending
+Payment initiated, awaiting gateway confirmation
+Paid
+Payment successfully captured
+Failed
+Payment attempt failed
+Refunded
+Full amount returned to renter
+PartiallyRefunded
+A portion of the amount returned (e.g., after deposit deduction)
+7.3 End-to-End Rental Flow
+Renter searches and filters listings by category, location, price, and availability.
+Renter selects a listing and submits a booking request with rental period and options.
+System validates availability and quantity; raises BookingRequestedEvent.
+Owner approves (or instant booking auto-confirms); raises BookingConfirmedEvent.
+Renter completes payment (and deposit, if applicable); raises PaymentSucceededEvent.
+Renter picks up the item (optionally verified via QR code); raises ItemPickedUpEvent.
+Renter returns the item at end of rental period; raises ItemReturnedEvent.
+Owner/system inspects the item; deposit is released or partially deducted.
+Both parties submit reviews; booking is marked Completed.
+8. External Interface Requirements
+8.1 Payment Gateways
+Stripe — international credit/debit card processing
+eSewa — local digital wallet payment integration
+Khalti — local digital wallet payment integration
+Cash on pickup — manual settlement recorded by the owner
+8.2 Maps & Location
+Geocoding and reverse-geocoding for listing addresses
+Interactive map display for pickup location and nearby listings
+8.3 Communication Channels
+Transactional email provider for verification, receipts, and reminders
+SMS provider for phone verification and optional alerts
+Web push notification service for browser/PWA alerts
+8.4 Storage & Documents
+Object storage for images, videos, identity documents, and generated agreements
+PDF generation service for rental agreements with digital signature capture
+9. MVP Scope & Phasing
+To deliver value quickly while preserving architectural integrity, the initial release focuses on the following capabilities:
+User authentication and profiles
+Listing creation and management
+Categories and search
+Booking with availability checks
+Payment integration (Stripe, eSewa, Khalti, cash on pickup)
+Booking approval workflow
+Messaging between renter and owner
+Notifications (in-app and email)
+Reviews and ratings
+Owner and admin dashboards
+Refund and cancellation handling
+Background jobs for reminders and automatic status updates
+10. Future / Advanced Features
+Once the MVP is stable, the following features extend the platform's value and are recommended for subsequent phases:
+10.1 Dynamic Pricing
+Adjust prices based on weekends, holidays, seasonal demand, and special events
+10.2 Recommendation System
+Recommend listings based on search history, rental history, wishlist, and location
+10.3 AI-Assisted Features
+Automatic listing descriptions and image enhancement
+Fraud detection and duplicate listing detection
+Smart search and conversational chat assistant
+10.4 Rental Insurance
+Optional coverage for damage, theft, and accidents
+10.5 QR Code Verification
+QR-code-based pickup and return verification
+10.6 Digital Signature
+Electronic signing of rental agreements prior to pickup
+10.7 Identity Verification & PWA Enhancements
+Fully automated KYC document verification
+Enhanced PWA offline mode and installability
+End of Document
