@@ -67,8 +67,18 @@ namespace RentApp.Domain.Entities.Messaging
             }
 
             LastMessageId = message.Id;
-            LastMessagePreview = message.Content;
             LastMessageAtUtc = message.SentAt;
+            
+            // Truncate preview to max 100 characters, fallback to [Attachment] if empty
+            string rawContent = message.Content;
+            if (string.IsNullOrWhiteSpace(rawContent))
+            {
+                LastMessagePreview = "[Attachment]";
+            }
+            else
+            {
+                LastMessagePreview = rawContent.Length <= 100 ? rawContent : rawContent[..100] + "...";
+            }
 
             if (message.SenderId == OwnerId)
             {
@@ -98,6 +108,8 @@ namespace RentApp.Domain.Entities.Messaging
             {
                 throw new ArgumentException("User is not a participant of this conversation.");
             }
+
+            AddDomainEvent(new ConversationReadEvent(Id, userId));
         }
 
         public void Archive()
@@ -108,16 +120,28 @@ namespace RentApp.Domain.Entities.Messaging
             }
             
             Status = ConversationStatus.Archived;
+            AddDomainEvent(new ConversationArchivedEvent(Id));
         }
 
         public void Reopen()
         {
-            if (Status != ConversationStatus.Archived && Status != ConversationStatus.Closed)
+            if (Status != ConversationStatus.Archived)
             {
-                throw new InvalidOperationException($"Cannot reopen a conversation from status {Status}.");
+                throw new InvalidOperationException($"Cannot reopen a conversation from status {Status}. Only Archived conversations can be reopened.");
             }
             
             Status = ConversationStatus.Active;
+        }
+
+        public void Close()
+        {
+            if (Status == ConversationStatus.Closed)
+            {
+                return;
+            }
+            
+            Status = ConversationStatus.Closed;
+            AddDomainEvent(new ConversationClosedEvent(Id));
         }
     }
 }
