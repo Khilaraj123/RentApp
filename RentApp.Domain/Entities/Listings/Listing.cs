@@ -24,6 +24,8 @@ namespace RentApp.Domain.Entities.Listings
         public ListingStatus Status { get; private set; }
         public CancellationPolicy CancellationPolicy { get; private set; } = CancellationPolicy.Moderate;
         public Money? SecurityDeposit { get; private set; }
+        
+        public bool RequiresOwnerApproval { get; private set; } = true;
 
         private readonly List<ListingImage> _images = new();
         public IReadOnlyCollection<ListingImage> Images => _images.AsReadOnly();

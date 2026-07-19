@@ -7,6 +7,7 @@ using RentApp.Domain.Entities.Listings;
 using RentApp.Domain.Repositories;
 using RentApp.Domain.ValueObjects;
 using RentApp.Domain.DomainEvents;
+using RentApp.Domain.Enums;
 
 namespace RentApp.Domain.DomainServices
 {
@@ -36,7 +37,7 @@ namespace RentApp.Domain.DomainServices
             return (listing.Quantity - bookedQuantity) >= quantity;
         }
 
-        public async Task<Booking> CreateBookingAsync(Guid renterId, Listing listing, RentalPeriod period, int quantity, Money totalAmount, Money? depositAmount, string? deliveryOption, CancellationToken cancellationToken = default)
+        public async Task<Booking> CreateBookingAsync(Guid renterId, Listing listing, RentalPeriod period, int quantity, Money totalAmount, Money? depositAmount, DeliveryOption? deliveryOption, CancellationToken cancellationToken = default)
         {
             var isAvailable = await IsListingAvailableAsync(listing, period, quantity, cancellationToken);
             
@@ -45,7 +46,7 @@ namespace RentApp.Domain.DomainServices
                 throw new InvalidOperationException("The listing is not available for the requested period and quantity.");
             }
 
-            var booking = new Booking(renterId, listing.Id, period, totalAmount, depositAmount, deliveryOption, quantity);
+            var booking = new Booking(renterId, listing.OwnerId, listing.Id, period, totalAmount, depositAmount, deliveryOption, quantity, listing.RequiresOwnerApproval);
             
             // Raise domain event
             booking.AddDomainEvent(new BookingRequestedEvent(booking.Id, listing.Id, renterId));

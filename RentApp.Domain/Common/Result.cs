@@ -41,7 +41,7 @@ namespace RentApp.Domain.Common
             return new Result<T>(true, null, value);
         }
 
-        public static Result<T> Failure(string error)
+        public static new Result<T> Failure(string error)
         {
             return new Result<T>(false, error, default);
         }

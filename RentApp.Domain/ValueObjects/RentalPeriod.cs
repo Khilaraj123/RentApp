@@ -13,8 +13,8 @@ namespace RentApp.Domain.ValueObjects
 
         public RentalPeriod(DateTime startDate, DateTime endDate)
         {
-            if (startDate > endDate)
-                throw new ArgumentException("Start date cannot be after end date.");
+            if (startDate >= endDate)
+                throw new ArgumentException("Start date must be before end date.");
 
             StartDate = startDate;
             EndDate = endDate;

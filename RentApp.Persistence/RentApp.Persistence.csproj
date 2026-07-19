@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RentApp.Application\RentApp.Application.csproj" />
+    <ProjectReference Include="..\RentApp.Domain\RentApp.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

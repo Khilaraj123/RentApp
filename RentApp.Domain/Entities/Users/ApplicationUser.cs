@@ -207,11 +207,6 @@ namespace RentApp.Domain.Entities.Users
             LastLoginAtUtc = DateTime.UtcNow;
         }
 
-        #endregion
-
-
-        #region Statistics
-
         public void UpdateRating(decimal averageRating, int reviewCount)
         {
             if (averageRating < 0)
