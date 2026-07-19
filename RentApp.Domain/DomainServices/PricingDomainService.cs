@@ -1,6 +1,7 @@
 using System.Linq;
 using RentApp.Domain.Entities.Listings;
 using RentApp.Domain.ValueObjects;
+using RentApp.Domain.Enums;
 
 namespace RentApp.Domain.DomainServices
 {
@@ -11,7 +12,7 @@ namespace RentApp.Domain.DomainServices
             // Simple MVP Pricing Logic:
             // Searches for a daily pricing rule. If found, calculates cost based on days.
             
-            var dailyRule = listing.PricingRules.FirstOrDefault(r => r.Type == "PerDay");
+            var dailyRule = listing.PricingRules.FirstOrDefault(r => r.Unit == RentalUnit.Day);
             
             if (dailyRule != null)
             {
