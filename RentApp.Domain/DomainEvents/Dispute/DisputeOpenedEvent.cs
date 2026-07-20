@@ -1,7 +1,7 @@
 using System;
 using RentApp.Domain.Common;
 
-namespace RentApp.Domain.DomainEvents
+namespace RentApp.Domain.DomainEvents.Dispute
 {
     public class DisputeOpenedEvent : DomainEvent
     {

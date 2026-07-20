@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using RentApp.Domain.Common;
 using RentApp.Domain.ValueObjects;
 using RentApp.Domain.DomainEvents.Review;
+using RentApp.Domain.Enums;
 
 namespace RentApp.Domain.Entities.Reviews
 {

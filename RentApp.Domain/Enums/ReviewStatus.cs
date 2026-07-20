@@ -1,4 +1,4 @@
-namespace RentApp.Domain.Entities.Reviews
+namespace RentApp.Domain.Enums
 {
     public enum ReviewStatus
     {
