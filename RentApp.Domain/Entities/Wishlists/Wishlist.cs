@@ -7,7 +7,6 @@ namespace RentApp.Domain.Entities.Wishlists
     public class Wishlist : AuditableEntity
     {
         public Guid UserId { get; private set; }
-        
         private readonly List<WishlistItem> _items = new();
         public IReadOnlyCollection<WishlistItem> Items => _items.AsReadOnly();
 

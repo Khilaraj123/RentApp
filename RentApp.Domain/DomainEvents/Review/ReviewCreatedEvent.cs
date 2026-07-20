@@ -1,14 +1,14 @@
 using System;
 using RentApp.Domain.Common;
 
-namespace RentApp.Domain.DomainEvents
+namespace RentApp.Domain.DomainEvents.Review
 {
-    public class ReviewSubmittedEvent : DomainEvent
+    public class ReviewCreatedEvent : DomainEvent
     {
         public Guid ReviewId { get; }
         public Guid BookingId { get; }
 
-        public ReviewSubmittedEvent(Guid reviewId, Guid bookingId)
+        public ReviewCreatedEvent(Guid reviewId, Guid bookingId)
         {
             ReviewId = reviewId;
             BookingId = bookingId;
