@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-
 namespace RentApp.Application.DTOs.Auth;
 
-public class LoginRequestDto
+public record LoginRequestDto
 {
-    // TODO: Add properties
+    public string Email { get; init; } = string.Empty;
+    public string Password { get; init; } = string.Empty;
 }

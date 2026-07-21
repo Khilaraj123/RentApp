@@ -1,10 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using RentApp.Domain.Entities.Bookings;
 using RentApp.Domain.Entities.Listings;
-using RentApp.Domain.ValueObjects;
 using RentApp.Domain.Enums;
+using RentApp.Domain.ValueObjects;
 
 namespace RentApp.Domain.DomainServices
 {
