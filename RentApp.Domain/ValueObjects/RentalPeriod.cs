@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace RentApp.Domain.ValueObjects
 {
+    [System.ComponentModel.DataAnnotations.Schema.ComplexType]
     public class RentalPeriod : ValueObject
     {
         public DateTime StartDate { get; private set; }

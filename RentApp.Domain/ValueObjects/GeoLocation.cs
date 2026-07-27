@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace RentApp.Domain.ValueObjects
 {
+    [System.ComponentModel.DataAnnotations.Schema.ComplexType]
     public class GeoLocation : ValueObject
     {
         public double Latitude { get; private set; }

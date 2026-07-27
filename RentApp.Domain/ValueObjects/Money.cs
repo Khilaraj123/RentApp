@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace RentApp.Domain.ValueObjects
 {
+    [System.ComponentModel.DataAnnotations.Schema.ComplexType]
     public class Money : ValueObject
     {
         public decimal Amount { get; private set; }

@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using RentApp.Domain.Entities.Users;
+using RentApp.Application.DTOs.Auth;
+using RentApp.Application.Interfaces.Identity;
 using RentApp.Presentation.ViewModels;
 using System.Threading.Tasks;
 
@@ -8,13 +8,11 @@ namespace RentApp.Presentation.Controllers;
 
 public class AuthController : Controller
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IAuthService _authService;
 
-    public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public AuthController(IAuthService authService)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
+        _authService = authService;
     }
 
     [HttpGet]
@@ -31,7 +29,13 @@ public class AuthController : Controller
         ViewData["ReturnUrl"] = returnUrl;
         if (ModelState.IsValid)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var request = new LoginRequestDto
+            {
+                Email = model.Email,
+                Password = model.Password
+            };
+
+            var result = await _authService.LoginAsync(request);
             if (result.Succeeded)
             {
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -40,7 +44,7 @@ public class AuthController : Controller
                 }
                 return RedirectToAction("Index", "Home");
             }
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ModelState.AddModelError(string.Empty, result.Error ?? "Invalid login attempt.");
         }
         return View(model);
     }
@@ -59,12 +63,18 @@ public class AuthController : Controller
         ViewData["ReturnUrl"] = returnUrl;
         if (ModelState.IsValid)
         {
-            var user = new ApplicationUser(model.FirstName, model.LastName, model.Email);
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var request = new RegisterRequestDto
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Password = model.Password
+            };
+
+            var result = await _authService.RegisterAsync(request);
 
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: false);
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
                     return Redirect(returnUrl);
@@ -72,10 +82,7 @@ public class AuthController : Controller
                 return RedirectToAction("Index", "Home");
             }
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+            ModelState.AddModelError(string.Empty, result.Error ?? "Registration failed.");
         }
         return View(model);
     }
@@ -84,7 +91,7 @@ public class AuthController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+        await _authService.LogoutAsync();
         return RedirectToAction("Index", "Home");
     }
 }

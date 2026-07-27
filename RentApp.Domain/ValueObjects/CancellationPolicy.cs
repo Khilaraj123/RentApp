@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace RentApp.Domain.ValueObjects
 {
+    [System.ComponentModel.DataAnnotations.Schema.ComplexType]
     public class CancellationPolicy : ValueObject
     {
         public string Name { get; private set; }

@@ -6,4 +6,7 @@
     <Project Path="RentApp.Persistence/RentApp.Persistence.csproj" Id="3ba1c86f-70f4-414c-8e32-502ef2700bd5" />
     <Project Path="RentApp.Presentation/RentApp.Presentation.csproj" Id="7804dddf-d552-42f6-8372-d6bde0feebcc" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="RentApp.UnitTest/RentApp.UnitTest.csproj" Id="c01c029a-1fa3-4dcd-8c80-82b3e7715098" />
+  </Folder>
 </Solution>

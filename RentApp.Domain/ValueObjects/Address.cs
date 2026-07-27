@@ -1,9 +1,8 @@
 using RentApp.Domain.Common;
-using System;
-using System.Collections.Generic;
 
 namespace RentApp.Domain.ValueObjects
 {
+    [System.ComponentModel.DataAnnotations.Schema.ComplexType]
     public class Address : ValueObject
     {
         public string Street { get; private set; }

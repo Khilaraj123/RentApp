@@ -16,8 +16,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     {
         base.OnModelCreating(builder);
 
-        // Customize the ASP.NET Identity model and override the defaults if needed.
-        // For example, you can rename the ASP.NET Identity table names and more.
-        // Add your customizations after calling base.OnModelCreating(builder);
+        // Configure ApplicationUser Relationships that throw warnings due to multiple relationships
+        builder.Entity<ApplicationUser>(b =>
+        {
+            b.HasMany(e => e.CustomerBookings).WithOne().HasForeignKey("CustomerId").OnDelete(DeleteBehavior.Restrict);
+            b.HasMany(e => e.OwnerBookings).WithOne().HasForeignKey("OwnerId").OnDelete(DeleteBehavior.Restrict);
+            
+            b.HasMany(e => e.ReviewsWritten).WithOne().HasForeignKey("ReviewerId").OnDelete(DeleteBehavior.Restrict);
+            b.HasMany(e => e.ReviewsReceived).WithOne().HasForeignKey("RevieweeId").OnDelete(DeleteBehavior.Restrict);
+            
+            b.HasMany(e => e.ConversationsAsCustomer).WithOne().HasForeignKey("CustomerId").OnDelete(DeleteBehavior.Restrict);
+            b.HasMany(e => e.ConversationsAsOwner).WithOne().HasForeignKey("OwnerId").OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }
