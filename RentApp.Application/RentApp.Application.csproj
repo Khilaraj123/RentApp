@@ -10,4 +10,10 @@
     <ProjectReference Include="..\RentApp.Domain\RentApp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EventHandlers\" />
+    <Folder Include="Interfaces\Core\" />
+    <Folder Include="Validators\" />
+  </ItemGroup>
+
 </Project>

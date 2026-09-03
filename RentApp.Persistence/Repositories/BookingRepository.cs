@@ -1,9 +1,5 @@
 using RentApp.Domain.Entities.Bookings;
 using RentApp.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace RentApp.Persistence.Repositories
 {
