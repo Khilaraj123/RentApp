@@ -1,11 +1,15 @@
-﻿namespace RentApp.Application.Interfaces.External
+﻿using RentApp.Application.DTOs.Notification;
+using RentApp.Application.DTOs.Notifications;
+
+namespace RentApp.Application.Interfaces.External
 {
     public interface INotificationService
     {
-        Task<NotificationResponseDto> CreateNotificationAsync(NotificationRequestDto request, CancellationToken cancellationToken = default);
-        Task<NotificationResponseDto> GetNotificationById(Guid id, CancellationToken cancellationToken = default);
-        Task<List<NotificationResponseDto>> GetNotificationsByUserId(Guid userId, CancellationToken cancellationToken = default);
-        Task MarkAsReadAsync(Guid userId, Guid notificationId, CancellationToken cancellationToken = default);
+        Task SendNotificationToUserAsync(Guid userId, string message, CancellationToken cancellationToken = default);
+        Task SendNotificationToAllAsync(string message, CancellationToken cancellationToken = default);
+        Task CreateNotificationAsync(CreateNotificationDto dto, CancellationToken cancellationToken = default);
+        Task<List<NotificationDto>> GetUserNotificationsAsync(Guid userId, CancellationToken cancellationToken = default);
+        Task MarkAsReadAsync(Guid notificationId, CancellationToken cancellationToken = default);
         Task MarkAllAsReadAsync(Guid userId, CancellationToken cancellationToken = default);
     }
 }

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using RentApp.Application.DTOs.Auth;
+using RentApp.Application.DTOs.Users;
 using RentApp.Application.Interfaces.Identity;
 using RentApp.Domain.Common;
 using RentApp.Domain.Entities.Users;
@@ -13,46 +15,42 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public AuthService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ILogger<AuthService> logger)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _logger = logger;
     }
 
-    public async Task<Result<LoginResponseDto>> LoginAsync(LoginRequestDto request, CancellationToken cancellationToken = default)
+    public Task<List<UserDto>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken = default)
     {
-        var result = await _signInManager.PasswordSignInAsync(request.Email, request.Password, false, lockoutOnFailure: false);
-
-        if (result.Succeeded)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            return Result<LoginResponseDto>.Success(new LoginResponseDto
-            {
-                // Assign any relevant properties here
-            });
-        }
-
-        return Result<LoginResponseDto>.Failure("Invalid login attempt.");
+        throw new NotImplementedException();
     }
 
-    public async Task<Result> RegisterAsync(RegisterRequestDto request, CancellationToken cancellationToken = default)
+    public Task<LoginResponseDto> LoginAsync(LoginRequestDto dto, string? ipAddress = null, CancellationToken cancellationToken = default)
     {
-        var user = new ApplicationUser(request.FirstName, request.LastName, request.Email);
-        var result = await _userManager.CreateAsync(user, request.Password);
-        
-        if (result.Succeeded)
-        {
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return Result.Success();
-        }
-
-        var error = result.Errors.FirstOrDefault()?.Description ?? "Failed to register user.";
-        return Result.Failure(error);
+        throw new NotImplementedException();
     }
 
-    public async Task LogoutAsync()
+    public Task LogoutAsync(Guid userId, string? ipAddress = null, CancellationToken cancellationToken = default)
     {
-        await _signInManager.SignOutAsync();
+        throw new NotImplementedException();
+    }
+
+    public Task LogoutFromAllDevicesAsync(Guid userId, string? ipAddress = null, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<LoginResponseDto> RefreshTokenAsync(string refreshToken, string? ipAddress = null, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RegisterAsync(RegisterRequestDto dto, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }

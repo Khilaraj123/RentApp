@@ -2,8 +2,8 @@
 
 namespace RentApp.Application.Interfaces.External
 {
-    public interface IDomainEventHandler
+    public interface IDomainEventHandler<in TEvent> where TEvent : IDomainEvent
     {
-        Task HandleAsync(DomainEvent domainEvent, CancellationToken cancellationToken = default);
+        Task HandleAsync(TEvent domainEvent, CancellationToken cancellationToken);
     }
 }
