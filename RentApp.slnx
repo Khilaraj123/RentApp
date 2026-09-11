@@ -1,4 +1,10 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".dockerignore" />
+    <File Path=".gitignore" />
+    <File Path="docker-compose.yml" />
+    <File Path="README.md" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="RentApp.Application/RentApp.Application.csproj" Id="0d7c1115-7da6-49d1-a312-6464bb343a8a" />
     <Project Path="RentApp.Domain/RentApp.Domain.csproj" Id="c2d3591a-0a8e-4b81-95b0-892ad03a5ce1" />

@@ -153,154 +153,6 @@ namespace RentApp.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("RentApp.Domain.Entities.Agreements.RentalAgreement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("AgreementNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CancellationPolicy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("CancellationReason")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("CancelledAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("DamagePolicy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DocumentFileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DocumentHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("DocumentSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("DocumentUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ExpiresAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ListingTitle")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("OwnerIpAddress")
-                        .HasColumnType("text");
-
-                    b.Property<string>("OwnerUserAgent")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("RenterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("RenterIpAddress")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RenterUserAgent")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("SignedByOwnerAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("SignedByOwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("SignedByRenterAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("SignedByRenterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TermsAndConditions")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "DepositAmount", "RentApp.Domain.Entities.Agreements.RentalAgreement.DepositAmount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("numeric");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "RentalAmount", "RentApp.Domain.Entities.Agreements.RentalAgreement.RentalAmount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("numeric");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "RentalPeriod", "RentApp.Domain.Entities.Agreements.RentalAgreement.RentalPeriod#RentalPeriod", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<DateTime>("EndDate")
-                                .HasColumnType("timestamp with time zone");
-
-                            b1.Property<DateTime>("StartDate")
-                                .HasColumnType("timestamp with time zone");
-                        });
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("BookingId");
-
-                    b.ToTable("RentalAgreement");
-                });
-
             modelBuilder.Entity("RentApp.Domain.Entities.Bookings.Booking", b =>
                 {
                     b.Property<Guid>("Id")
@@ -324,9 +176,6 @@ namespace RentApp.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("CustomerNote")
@@ -415,11 +264,11 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Booking");
+                    b.HasIndex("RenterId");
+
+                    b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Bookings.BookingItem", b =>
@@ -453,7 +302,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.ToTable("BookingItem");
+                    b.ToTable("BookingItems");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Bookings.BookingStatusHistory", b =>
@@ -484,7 +333,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.ToTable("BookingStatusHistory");
+                    b.ToTable("BookingStatusHistories");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Categories.Category", b =>
@@ -554,118 +403,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.ToTable("Category");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Disputes.Dispute", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AssignedAdminId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ClosedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("InitiatorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("InternalNotes")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("PaymentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("RefundId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RenterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Resolution")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ResolutionType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("ResolvedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ResolvedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("BookingId");
-
-                    b.ToTable("Dispute");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Disputes.Evidence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("DisputeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("FileUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DisputeId");
-
-                    b.ToTable("Evidence");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Listings.AvailabilityRule", b =>
@@ -695,7 +433,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("ListingId");
 
-                    b.ToTable("AvailabilityRule");
+                    b.ToTable("AvailabilityRules");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Listings.Listing", b =>
@@ -826,7 +564,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Listing");
+                    b.ToTable("Listings");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Listings.ListingImage", b =>
@@ -852,7 +590,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("ListingId");
 
-                    b.ToTable("ListingImage");
+                    b.ToTable("ListingImages");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Listings.ListingPolicy", b =>
@@ -908,7 +646,7 @@ namespace RentApp.Persistence.Migrations
                     b.HasIndex("ListingId")
                         .IsUnique();
 
-                    b.ToTable("ListingPolicy");
+                    b.ToTable("ListingPolicies");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Listings.PricingRule", b =>
@@ -945,467 +683,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("ListingId");
 
-                    b.ToTable("PricingRule");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Messaging.Conversation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("BookingId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("LastMessageAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("LastMessageId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("LastMessagePreview")
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("ListingId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("OwnerLastReadAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("OwnerUnreadCount")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("RenterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("RenterLastReadAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("RenterUnreadCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("OwnerId");
-
-                    b.ToTable("Conversation");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Messaging.Message", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ConversationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SenderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Message");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Messaging.MessageAttachment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("FileUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("MessageId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("MessageAttachment");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Notifications.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ActionUrl")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Channel")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("DeliveredAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DeliveryStatus")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("ExpiresAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FailureReason")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("ReadAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ReferenceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("ReferenceType")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RetryCount")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("SentAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TemplateData")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TemplateName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notification");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Payments.Payment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BookingId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("FailureReason")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Gateway")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("GatewayResponse")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Method")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("PaidAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PaymentIntentId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PaymentReference")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "RentApp.Domain.Entities.Payments.Payment.Amount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("numeric");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Payment");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Payments.Refund", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ApprovedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ApprovedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PaymentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Reason")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("RefundedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "RentApp.Domain.Entities.Payments.Refund.Amount#Money", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<decimal>("Amount")
-                                .HasColumnType("numeric");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasColumnType("text");
-                        });
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("PaymentId");
-
-                    b.ToTable("Refund");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Reports.Report", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("ActionTaken")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("ApplicationUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AssignedModeratorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Reason")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("ReporterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ResolutionNotes")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ReviewedAtUtc")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ReviewedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("TargetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("TargetType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Report");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Reports.ReportEvidence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ContentType")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("EvidenceUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("text");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("ReportId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReportId");
-
-                    b.ToTable("ReportEvidence");
+                    b.ToTable("PricingRules");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Reviews.Review", b =>
@@ -1516,7 +794,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("ReviewerId");
 
-                    b.ToTable("Review");
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Reviews.ReviewImage", b =>
@@ -1583,9 +861,6 @@ namespace RentApp.Persistence.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("EmailNotificationsEnabled")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
@@ -1635,9 +910,6 @@ namespace RentApp.Persistence.Migrations
                     b.Property<string>("ProfilePictureUrl")
                         .HasColumnType("text");
 
-                    b.Property<bool>("PushNotificationsEnabled")
-                        .HasColumnType("boolean");
-
                     b.Property<double>("ResponseRate")
                         .HasColumnType("double precision");
 
@@ -1646,9 +918,6 @@ namespace RentApp.Persistence.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
-
-                    b.Property<bool>("SmsNotificationsEnabled")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -1670,6 +939,48 @@ namespace RentApp.Persistence.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("RentApp.Domain.Entities.Users.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedByIp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TokenFamilyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Users.UserProfile", b =>
@@ -1722,7 +1033,7 @@ namespace RentApp.Persistence.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserProfile");
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Wishlists.Wishlist", b =>
@@ -1753,7 +1064,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Wishlist");
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Wishlists.WishlistItem", b =>
@@ -1784,7 +1095,7 @@ namespace RentApp.Persistence.Migrations
 
                     b.HasIndex("WishlistId");
 
-                    b.ToTable("WishlistItem");
+                    b.ToTable("WishlistItems");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1838,31 +1149,17 @@ namespace RentApp.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RentApp.Domain.Entities.Agreements.RentalAgreement", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("RentalAgreements")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("RentApp.Domain.Entities.Bookings.Booking", "Booking")
-                        .WithMany()
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
             modelBuilder.Entity("RentApp.Domain.Entities.Bookings.Booking", b =>
                 {
                     b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("CustomerBookings")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
                         .WithMany("OwnerBookings")
                         .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
+                        .WithMany("CustomerBookings")
+                        .HasForeignKey("RenterId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -1891,33 +1188,10 @@ namespace RentApp.Persistence.Migrations
                 {
                     b.HasOne("RentApp.Domain.Entities.Categories.Category", "Parent")
                         .WithMany("Subcategories")
-                        .HasForeignKey("ParentId");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Disputes.Dispute", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("DisputesCreated")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("RentApp.Domain.Entities.Bookings.Booking", "Booking")
-                        .WithMany()
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Disputes.Evidence", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Disputes.Dispute", null)
-                        .WithMany("Evidence")
-                        .HasForeignKey("DisputeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Listings.AvailabilityRule", b =>
@@ -1975,83 +1249,6 @@ namespace RentApp.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RentApp.Domain.Entities.Messaging.Conversation", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("ConversationsAsCustomer")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("ConversationsAsOwner")
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Messaging.Message", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("ApplicationUserId");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Messaging.MessageAttachment", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Messaging.Message", null)
-                        .WithMany("Attachments")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Notifications.Notification", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Payments.Payment", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("ApplicationUserId");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Payments.Refund", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("Refunds")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("RentApp.Domain.Entities.Payments.Payment", null)
-                        .WithMany("Refunds")
-                        .HasForeignKey("PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Reports.Report", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
-                        .WithMany("ReportsCreated")
-                        .HasForeignKey("ApplicationUserId");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Reports.ReportEvidence", b =>
-                {
-                    b.HasOne("RentApp.Domain.Entities.Reports.Report", null)
-                        .WithMany("Evidence")
-                        .HasForeignKey("ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("RentApp.Domain.Entities.Reviews.Review", b =>
                 {
                     b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", null)
@@ -2074,6 +1271,17 @@ namespace RentApp.Persistence.Migrations
                         .HasForeignKey("ReviewId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RentApp.Domain.Entities.Users.RefreshToken", b =>
+                {
+                    b.HasOne("RentApp.Domain.Entities.Users.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RentApp.Domain.Entities.Users.UserProfile", b =>
@@ -2117,11 +1325,6 @@ namespace RentApp.Persistence.Migrations
                     b.Navigation("Subcategories");
                 });
 
-            modelBuilder.Entity("RentApp.Domain.Entities.Disputes.Dispute", b =>
-                {
-                    b.Navigation("Evidence");
-                });
-
             modelBuilder.Entity("RentApp.Domain.Entities.Listings.Listing", b =>
                 {
                     b.Navigation("AvailabilityRules");
@@ -2133,21 +1336,6 @@ namespace RentApp.Persistence.Migrations
                     b.Navigation("PricingRules");
                 });
 
-            modelBuilder.Entity("RentApp.Domain.Entities.Messaging.Message", b =>
-                {
-                    b.Navigation("Attachments");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Payments.Payment", b =>
-                {
-                    b.Navigation("Refunds");
-                });
-
-            modelBuilder.Entity("RentApp.Domain.Entities.Reports.Report", b =>
-                {
-                    b.Navigation("Evidence");
-                });
-
             modelBuilder.Entity("RentApp.Domain.Entities.Reviews.Review", b =>
                 {
                     b.Navigation("Images");
@@ -2155,31 +1343,13 @@ namespace RentApp.Persistence.Migrations
 
             modelBuilder.Entity("RentApp.Domain.Entities.Users.ApplicationUser", b =>
                 {
-                    b.Navigation("ConversationsAsCustomer");
-
-                    b.Navigation("ConversationsAsOwner");
-
                     b.Navigation("CustomerBookings");
-
-                    b.Navigation("DisputesCreated");
 
                     b.Navigation("Listings");
 
-                    b.Navigation("Messages");
-
-                    b.Navigation("Notifications");
-
                     b.Navigation("OwnerBookings");
 
-                    b.Navigation("Payments");
-
                     b.Navigation("Profile");
-
-                    b.Navigation("Refunds");
-
-                    b.Navigation("RentalAgreements");
-
-                    b.Navigation("ReportsCreated");
 
                     b.Navigation("ReviewsReceived");
 

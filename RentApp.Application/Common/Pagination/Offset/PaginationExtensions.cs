@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RentApp.Domain.Common.Pagination;
 
 namespace RentApp.Application.Common.Pagination.Offset
 {

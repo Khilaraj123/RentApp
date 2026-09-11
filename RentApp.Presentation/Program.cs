@@ -1,30 +1,22 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using RentApp.Application;
 using RentApp.Domain.Entities.Users;
+using RentApp.Infrastructure;
+using RentApp.Persistence;
 using RentApp.Persistence.DbContext;
-using RentApp.Application.Interfaces.Identity;
-using RentApp.Infrastructure.Identity; // Assuming this will be the namespace for AuthService
+using RentApp.Persistence.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Database Context
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Register Clean Architecture Layer Dependencies
+builder.Services.AddApplication();
+builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
-// Identity Configuration
-builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = true;
-    options.Password.RequiredLength = 8;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
+
 
 // Configure Cookie Auth
 builder.Services.ConfigureApplicationCookie(options =>
@@ -33,10 +25,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Auth/AccessDenied";
 });
 
-// Application Services
-builder.Services.AddScoped<IAuthService, AuthService>();
-
 var app = builder.Build();
+
+// Seed initial database roles and admin account
+await DatabaseSeeder.SeedDatabaseAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -52,6 +44,11 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Area route (must be registered before the default route)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

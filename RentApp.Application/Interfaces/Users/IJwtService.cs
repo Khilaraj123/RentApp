@@ -1,12 +1,12 @@
-﻿using RentApp.Application.DTOs.Auth;
-using RentApp.Application.DTOs.Users;
+﻿using RentApp.Application.DTOs.Users.Auth;
+using RentApp.Domain.Entities.Users;
 
 namespace RentApp.Application.Interfaces.Users
 {
     public interface IJwtService
     {
-        Task<UserTokenDto> GenerateAccessTokenAsync(
-        UserDto user,
+        Task<AccessTokenResult> GenerateAccessTokenAsync(
+        ApplicationUser user,
         CancellationToken cancellationToken = default);
     }
 }

@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using RentApp.Application.DTOs.Auth;
-using RentApp.Application.Interfaces.Identity;
+using RentApp.Application.DTOs.Users.Auth;
+using RentApp.Application.Interfaces.Users;
 using RentApp.Presentation.ViewModels;
+using System;
 using System.Threading.Tasks;
 
 namespace RentApp.Presentation.Controllers;
@@ -29,22 +30,27 @@ public class AuthController : Controller
         ViewData["ReturnUrl"] = returnUrl;
         if (ModelState.IsValid)
         {
-            var request = new LoginRequestDto
+            try
             {
-                Email = model.Email,
-                Password = model.Password
-            };
+                var request = new LoginRequestDto
+                {
+                    EmailOrPhone = model.Email,
+                    Password = model.Password
+                };
 
-            var result = await _authService.LoginAsync(request);
-            if (result.Succeeded)
-            {
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var result = await _authService.LoginAsync(request, ipAddress);
+
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
                     return Redirect(returnUrl);
                 }
                 return RedirectToAction("Index", "Home");
             }
-            ModelState.AddModelError(string.Empty, result.Error ?? "Invalid login attempt.");
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
         }
         return View(model);
     }
@@ -63,35 +69,29 @@ public class AuthController : Controller
         ViewData["ReturnUrl"] = returnUrl;
         if (ModelState.IsValid)
         {
-            var request = new RegisterRequestDto
+            try
             {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                Password = model.Password
-            };
+                var request = new RegisterRequestDto
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Password = model.Password
+                };
 
-            var result = await _authService.RegisterAsync(request);
+                await _authService.RegisterAsync(request);
 
-            if (result.Succeeded)
-            {
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
                     return Redirect(returnUrl);
                 }
                 return RedirectToAction("Index", "Home");
             }
-
-            ModelState.AddModelError(string.Empty, result.Error ?? "Registration failed.");
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
         }
         return View(model);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Logout()
-    {
-        await _authService.LogoutAsync();
-        return RedirectToAction("Index", "Home");
     }
 }

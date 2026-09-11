@@ -1,30 +1,30 @@
-﻿using RentApp.Application.DTOs.Auth;
+using RentApp.Application.DTOs.Users.Auth;
 using RentApp.Domain.Entities.Users;
 
 namespace RentApp.Application.Interfaces.Users
 {
-    internal interface IRefreshTokenService
+    public interface IRefreshTokenService
     {
-        Task<UserTokenDto> CreateAsync(
-        Guid userId,
-        string? ipAddress,
-        Guid? tokenFamilyId = null,
-        CancellationToken cancellationToken = default);
+        Task<RefreshTokenResult> CreateAsync(
+            Guid userId,
+            string? ipAddress,
+            Guid? tokenFamilyId = null,
+            CancellationToken cancellationToken = default);
 
-        Task<UserTokenDto?> ValidateAsync(
+        Task<RefreshToken?> ValidateAsync(
             string refreshToken,
             CancellationToken cancellationToken = default);
 
-        Task<UserTokenDto> RotateAsync(
+        Task<RefreshTokenResult> RotateAsync(
             RefreshToken currentToken,
             string? ipAddress,
             CancellationToken cancellationToken = default);
 
         Task RevokeAsync(
-        RefreshToken token,
-        string? ipAddress,
-        string reason,
-        CancellationToken cancellationToken = default);
+            RefreshToken token,
+            string? ipAddress,
+            string reason,
+            CancellationToken cancellationToken = default);
 
         Task RevokeAllAsync(
             Guid userId,

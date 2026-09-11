@@ -1,6 +1,6 @@
 namespace RentApp.Domain.Common
 {
-    public abstract class BaseEntity : IEntity
+    public abstract class BaseEntity : IHasDomainEvents
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 

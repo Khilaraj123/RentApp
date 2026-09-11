@@ -5,8 +5,10 @@ using RentApp.Domain.Common;
 using RentApp.Domain.Enums;
 using RentApp.Domain.ValueObjects;
 using RentApp.Domain.DomainEvents;
+using RentApp.Domain.DomainEvents.Listing;
 using RentApp.Domain.Entities.Categories;
 using RentApp.Domain.Entities.Users;
+using RentApp.Domain.Enums.Listing;
 
 namespace RentApp.Domain.Entities.Listings
 {

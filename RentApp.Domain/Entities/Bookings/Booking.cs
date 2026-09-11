@@ -5,6 +5,7 @@ using RentApp.Domain.Enums;
 using RentApp.Domain.ValueObjects;
 using RentApp.Domain.DomainEvents;
 using RentApp.Domain.DomainEvents.Booking;
+using RentApp.Domain.Enums.Booking;
 
 namespace RentApp.Domain.Entities.Bookings
 {

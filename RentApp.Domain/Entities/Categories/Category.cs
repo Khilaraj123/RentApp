@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using RentApp.Domain.Common;
 using RentApp.Domain.DomainEvents;
+using RentApp.Domain.DomainEvents.Category;
 using RentApp.Domain.Entities.Listings;
 
 namespace RentApp.Domain.Entities.Categories

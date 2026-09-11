@@ -1,5 +1,6 @@
 ﻿using RentApp.Application.Common.Pagination.Offset;
 using RentApp.Application.DTOs.Users;
+using RentApp.Domain.Common.Pagination;
 
 namespace RentApp.Application.Interfaces.Users
 {

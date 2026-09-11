@@ -1,8 +1,8 @@
-using RentApp.Application.DTOs.Auth;
 using RentApp.Application.DTOs.Users;
+using RentApp.Application.DTOs.Users.Auth;
 using RentApp.Domain.Common;
 
-namespace RentApp.Application.Interfaces.Identity;
+namespace RentApp.Application.Interfaces.Users;
 
 public interface IAuthService
 {

@@ -1,21 +1,16 @@
 using Microsoft.AspNetCore.Identity;
-using RentApp.Domain.Entities.Agreements;
+using RentApp.Domain.Common;
 using RentApp.Domain.Entities.Bookings;
-using RentApp.Domain.Entities.Disputes;
 using RentApp.Domain.Entities.Listings;
-using RentApp.Domain.Entities.Messaging;
-using RentApp.Domain.Entities.Notifications;
-using RentApp.Domain.Entities.Payments;
-using RentApp.Domain.Entities.Reports;
 using RentApp.Domain.Entities.Reviews;
 using RentApp.Domain.Entities.Wishlists;
 
 namespace RentApp.Domain.Entities.Users
 {
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationUser : IdentityUser<Guid>, IHasDomainEvents
     {
-        public string FirstName { get; private set; } = string.Empty;
-        public string LastName { get; private set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
         public string? ProfilePictureUrl { get; private set; }
         public DateOnly? DateOfBirth { get; private set; }
         public string? Bio { get; private set; }
@@ -24,6 +19,7 @@ namespace RentApp.Domain.Entities.Users
         public bool IsIdentityVerified { get; private set; }
         public bool IsBlocked { get; private set; }
         public bool IsDeleted { get; private set; }
+        public bool IsEnabled => !IsBlocked && !IsDeleted;
 
         public DateTime? DeletedAtUtc { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
@@ -38,11 +34,6 @@ namespace RentApp.Domain.Entities.Users
 
         public TimeSpan? AverageResponseTime { get; private set; }
 
-        public bool EmailNotificationsEnabled { get; private set; } = true;
-        public bool PushNotificationsEnabled { get; private set; } = true;
-        public bool SmsNotificationsEnabled { get; private set; }
-
-
         public virtual UserProfile? Profile { get; private set; }
         public virtual ICollection<Listing> Listings { get; private set; }
         public virtual ICollection<Booking> CustomerBookings { get; private set; }
@@ -50,17 +41,11 @@ namespace RentApp.Domain.Entities.Users
         public virtual ICollection<Review> ReviewsWritten { get; private set; }
         public virtual ICollection<Review> ReviewsReceived { get; private set; }
         public virtual ICollection<Wishlist> WishlistItems { get; private set; }
-        public virtual ICollection<Payment> Payments { get; private set; }
-        public virtual ICollection<Refund> Refunds { get; private set; }
-        public virtual ICollection<Conversation> ConversationsAsOwner { get; private set; }
-        public virtual ICollection<Conversation> ConversationsAsCustomer { get; private set; }
-        public virtual ICollection<Message> Messages { get; private set; }
-        public virtual ICollection<Notification> Notifications { get; private set; }
-        public virtual ICollection<Dispute> DisputesCreated { get; private set; }
-        public virtual ICollection<Report> ReportsCreated { get; private set; }
-        public virtual ICollection<RentalAgreement> RentalAgreements { get; private set; }
-
-        private ApplicationUser()
+        
+        private readonly List<IDomainEvent> _domainEvents = new();
+        public IReadOnlyCollection<IDomainEvent> DomainEvents =>
+      _domainEvents.AsReadOnly();
+        public ApplicationUser()
         {
             Listings = new List<Listing>();
             CustomerBookings = new List<Booking>();
@@ -70,22 +55,6 @@ namespace RentApp.Domain.Entities.Users
             ReviewsReceived = new List<Review>();
 
             WishlistItems = new List<Wishlist>();
-
-            Payments = new List<Payment>();
-            Refunds = new List<Refund>();
-
-            ConversationsAsOwner = new List<Conversation>();
-            ConversationsAsCustomer = new List<Conversation>();
-
-            Messages = new List<Message>();
-
-            Notifications = new List<Notification>();
-
-            DisputesCreated = new List<Dispute>();
-
-            ReportsCreated = new List<Report>();
-
-            RentalAgreements = new List<RentalAgreement>();
 
             CreatedAtUtc = DateTime.UtcNow;
         }
@@ -253,42 +222,21 @@ namespace RentApp.Domain.Entities.Users
 
 
 
-        public void EnableEmailNotifications()
+
+
+        public void AddDomainEvent(IDomainEvent domainEvent)
         {
-            EmailNotificationsEnabled = true;
-            UpdatedAtUtc = DateTime.UtcNow;
+            _domainEvents.Add(domainEvent);
         }
 
-        public void DisableEmailNotifications()
+        public void ClearDomainEvents()
         {
-            EmailNotificationsEnabled = false;
-            UpdatedAtUtc = DateTime.UtcNow;
+            _domainEvents.Clear();
         }
 
-        public void EnablePushNotifications()
+        public void RemoveDomainEvent(IDomainEvent domainEvent)
         {
-            PushNotificationsEnabled = true;
-            UpdatedAtUtc = DateTime.UtcNow;
+            _domainEvents.Remove(domainEvent);
         }
-
-        public void DisablePushNotifications()
-        {
-            PushNotificationsEnabled = false;
-            UpdatedAtUtc = DateTime.UtcNow;
-        }
-
-        public void EnableSmsNotifications()
-        {
-            SmsNotificationsEnabled = true;
-            UpdatedAtUtc = DateTime.UtcNow;
-        }
-
-        public void DisableSmsNotifications()
-        {
-            SmsNotificationsEnabled = false;
-            UpdatedAtUtc = DateTime.UtcNow;
-        }
-
-
     }
 }

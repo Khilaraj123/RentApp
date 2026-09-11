@@ -1,43 +1,74 @@
 # RentApp
 
-RentApp is a modern peer-to-peer rental marketplace backend built using **Clean Architecture** and **Domain-Driven Design (DDD)** principles.
+RentApp is a modern peer-to-peer rental marketplace backend built using **Clean Architecture** and **Domain-Driven Design (DDD)** principles in **.NET 10** and **Entity Framework Core**.
 
-## Architecture
+## Architectural Principles
 
-The project strictly follows DDD principles in its core domain model:
-- **Encapsulated State**: Entities use `private set` and rich domain methods to mutate state, ensuring invariants are always protected.
+The solution follows clean domain-driven architecture:
+- **Encapsulated State**: Entities use `private set` and rich domain methods to mutate state, ensuring domain invariants are protected.
 - **Value Objects**: Core concepts like `Money`, `Address`, `GeoLocation`, and `RentalPeriod` are modeled as immutable value objects.
-- **Aggregate Roots**: Logical boundaries are enforced (e.g., `Payment` owns `Refund`, `Report` owns `ReportEvidence`, `Dispute` manages its lifecycle).
-- **Domain Events**: Inter-aggregate communication and side effects (like sending notifications or updating external gateways) are handled via Domain Events (`PaymentSucceededEvent`, `ConversationStartedEvent`, `ReportAssignedEvent`, etc.).
+- **Aggregate Roots**: Clean boundary enforcement where aggregate roots manage internal child entities and enforce consistency boundaries.
+- **Domain Events**: Inter-aggregate communication and side effects are dispatched via Domain Events (e.g., `BookingRequestedEvent`, `BookingCompletedEvent`, `UserRegisteredEvent`).
 
-## Core Bounded Contexts
+---
 
-### 📦 Catalog
+## Core MVP Bounded Contexts
+
+The current codebase is streamlined for a fast, robust **Minimum Viable Product (MVP)**:
+
+### 👤 Identity & Users (`RentApp.Domain.Entities.Users`)
+- **ApplicationUser**: ASP.NET Core Identity user aggregate with profile details, status tracking (`IsBlocked`, `IsDeleted`, `IsEnabled`), and user ratings.
+- **RefreshToken**: Token management for secure JWT authentication, token rotation, and multi-device session handling.
+
+### 📦 Catalog (`RentApp.Domain.Entities.Listings`, `RentApp.Domain.Entities.Categories`)
 - **Listing**: The core aggregate for items available to rent. Manages pricing rules, availability rules, condition, security deposits, and listing policies.
-- **Category**: Self-referencing hierarchical structure for navigating listings using SEO-friendly slugs.
+- **Category**: Hierarchical self-referencing category structure for organizing and navigating listings with SEO-friendly slugs.
 
-### 📅 Bookings & Agreements
-- **Booking**: Manages the rental lifecycle from Request to Active, Completed, or Cancelled.
-- **RentalAgreement**: Represents a snapshot of the legal contract and terms exactly as they were agreed upon at the time of booking.
+### 📅 Bookings (`RentApp.Domain.Entities.Bookings`)
+- **Booking**: Manages the complete rental handshake and lifecycle:
+  - `Requested` ➔ `Confirmed` ➔ `Paid` ➔ `ItemPickedUp` ➔ `ItemReturned` ➔ `Completed` (or `Cancelled`/`Rejected`).
+  - Tracks rental period, quantity, item snapshots, security deposits, and status history.
 
-### 💬 Messaging
-- **Conversation**: A lightweight, highly scalable aggregate serving as a boundary for inbox logic. Tracks unread counts, preview snippets, and active contexts (`ListingId`, `BookingId`).
-- **Message**: Strongly typed messages (Text, Image, System) that dispatch real-time events.
-- **MessageAttachment**: Tracks multimedia file uploads sent in chat.
+### 💳 Financials (`RentApp.Domain.Entities.Payments`)
+- **Payment**: Handles transaction tracking, payment methods, and gateways.
+- **Refund**: Manages manual and automated refund workflows.
+- **CommissionTransaction & Coupon**: Platform fee accounting and promotional discount mechanics.
 
-### 💳 Financials
-- **Payment**: The financial aggregate root handling transactions, gateways (Stripe, Esewa, Khalti, FonePay), and owning refunds to guarantee invariants.
-- **Refund**: A child entity managing manual and automated refund workflows.
-- **CommissionTransaction**: Tracks platform accounting and fees.
-- **Coupon**: Enforces complex discount rules and usage limits.
+### ⭐ Social & Feedback (`RentApp.Domain.Entities.Reviews`, `RentApp.Domain.Entities.Wishlists`)
+- **Review**: Ratings and feedback left by renters/owners upon booking completion.
+- **Wishlist**: Saved items for future rentals.
 
-### 🛡️ Trust & Safety
-- **Report**: Moderation aggregate that handles flagged users, listings, or messages. Owns `ReportEvidence` files and follows a strict administrative workflow.
-- **Dispute**: Enforces resolution for conflicts (Damaged Item, Missing Item, etc.) between renters and owners.
+---
 
-### 🔔 Notifications
-- **Notification**: Supports multi-channel delivery (Email, Push, In-App) by decoupling delivery status from in-app read status.
+## Project Structure
+
+```
+RentApp/
+├── RentApp.Domain/         # Core business logic, Entities, Value Objects, Domain Events, Repository Interfaces
+├── RentApp.Application/    # Use cases, DTOs, Application Interfaces, Options
+├── RentApp.Infrastructure/ # External service integrations, JWT, Security, Auth implementations
+├── RentApp.Persistence/    # EF Core DbContext, Configurations, Migrations, Repository Implementations
+└── RentApp.Presentation/   # ASP.NET Core Web/API Controllers, Views, ViewModels, Routing
+```
+
+---
+
+## Roadmap & Planned Modules (Phase 2 & Phase 3)
+
+To keep the initial MVP lightweight, focused, and maintainable, the following modules are planned for future phases:
+
+- **💬 Real-Time Messaging**: SignalR-powered chat between renters and owners directly inside the app.
+- **📄 Digital Rental Agreements**: Auto-generated PDF contracts with audit trails and electronic signature capture.
+- **🔔 In-App Notification Center**: Centralized notification queue supporting multi-channel delivery (In-App, Push, SMS, Email).
+- **⚖️ Trust & Dispute Resolution**: Formal conflict arbitration system with evidence upload workflows and administrative resolution tools.
+- **🚩 Content Moderation & Reporting**: User and listing reporting system with moderator dashboards.
+
+---
 
 ## Technologies
-- **.NET 10** (C#)
-- **Entity Framework Core**
+
+- **.NET 10** (C# 13)
+- **Entity Framework Core 10**
+- **PostgreSQL / Npgsql**
+- **ASP.NET Core Identity**
+- **JWT (JSON Web Tokens)**

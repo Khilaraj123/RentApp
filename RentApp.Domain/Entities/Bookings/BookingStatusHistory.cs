@@ -1,6 +1,6 @@
 using System;
 using RentApp.Domain.Common;
-using RentApp.Domain.Enums;
+using RentApp.Domain.Enums.Booking;
 
 namespace RentApp.Domain.Entities.Bookings
 {

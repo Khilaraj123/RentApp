@@ -1,4 +1,4 @@
-﻿using RentApp.Application.DTOs.Users;
+﻿using RentApp.Application.DTOs.Users.Profile;
 
 namespace RentApp.Application.Interfaces.Users
 {
