@@ -1,0 +1,130 @@
+@model RentApp.Presentation.ViewModels.SidebarViewModel
+
+@{
+    var isAdmin = string.Equals(Model.Role, "Admin", StringComparison.OrdinalIgnoreCase);
+    var isOwner = string.Equals(Model.Role, "Owner", StringComparison.OrdinalIgnoreCase);
+    var isRenter = string.Equals(Model.Role, "Renter", StringComparison.OrdinalIgnoreCase);
+}
+
+<aside class="rentapp-sidebar @Model.RoleTheme" id="rentappSidebar">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header p-3 border-bottom d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2 overflow-hidden">
+            <div class="sidebar-role-icon @(isAdmin ? "icon-admin" : (isOwner ? "icon-owner" : "icon-renter"))">
+                @if (isAdmin)
+                {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                }
+                else if (isOwner)
+                {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                }
+                else
+                {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="5"/>
+                        <path d="M20 21a8 8 0 0 0-16 0"/>
+                    </svg>
+                }
+            </div>
+            <div class="d-flex flex-column">
+                <span class="fw-bold sidebar-role-title">@Model.RoleDisplayName</span>
+                <span class="small text-muted text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px;">@Model.Role Role</span>
+            </div>
+        </div>
+
+        <!-- Role Quick Switcher Pills for Testing/Previewing -->
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle py-0 px-2 rounded-pill" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Switch Preview Role">
+                <span style="font-size: 0.75rem;">Switch</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="font-size: 0.82rem;">
+                <li><h6 class="dropdown-header">Preview Mode</h6></li>
+                <li><a class="dropdown-item @(isAdmin ? "active" : "")" href="?role=Admin">Admin View</a></li>
+                <li><a class="dropdown-item @(isOwner ? "active" : "")" href="?role=Owner">Owner View</a></li>
+                <li><a class="dropdown-item @(isRenter ? "active" : "")" href="?role=Renter">Renter View</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Navigation Menu Body -->
+    <div class="sidebar-body flex-grow-1 overflow-y-auto px-2 py-3">
+        @foreach (var group in Model.Groups)
+        {
+            <div class="sidebar-group mb-3">
+                @if (!string.IsNullOrWhiteSpace(group.Title))
+                {
+                    <div class="sidebar-group-title px-3 mb-1 text-uppercase text-muted fw-bold">
+                        @group.Title
+                    </div>
+                }
+                <ul class="nav flex-column gap-1">
+                    @foreach (var item in group.Items)
+                    {
+                        var targetUrl = !string.IsNullOrEmpty(item.Url) 
+                            ? item.Url 
+                            : (string.IsNullOrEmpty(item.Area)
+                                ? Url.Action(item.Action ?? "Index", item.Controller ?? "Home")
+                                : Url.Action(item.Action ?? "Index", item.Controller ?? "Home", new { area = item.Area }));
+
+                        <li class="nav-item">
+                            <a href="@targetUrl" class="nav-link sidebar-nav-item @(item.IsActive ? "active" : "")">
+                                <span class="sidebar-item-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        @Html.Raw(item.IconSvg)
+                                    </svg>
+                                </span>
+                                <span class="sidebar-item-title flex-grow-1">@item.Title</span>
+                                @if (!string.IsNullOrEmpty(item.Badge))
+                                {
+                                    <span class="badge rounded-pill @(item.BadgeClass ?? "bg-secondary") sidebar-item-badge">
+                                        @item.Badge
+                                    </span>
+                                }
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+    <!-- Sidebar Footer / User Profile Card -->
+    <div class="sidebar-footer p-3 border-top bg-light-subtle">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2 overflow-hidden">
+                <div class="rentapp-avatar-circle rentapp-avatar-circle-sm flex-shrink-0">
+                    @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                    {
+                        <img src="@Model.ProfilePictureUrl" alt="Profile" class="rentapp-avatar-img" />
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Initials))
+                    {
+                        <span class="rentapp-avatar-initials">@Model.Initials</span>
+                    }
+                    else
+                    {
+                        <span class="rentapp-avatar-initials">@(isAdmin ? "AD" : (isOwner ? "OW" : "RN"))</span>
+                    }
+                </div>
+                <div class="d-flex flex-column overflow-hidden">
+                    <span class="fw-semibold text-truncate small">@(Model.FullName ?? (isAdmin ? "Administrator" : "Property Owner"))</span>
+                    <span class="text-muted text-truncate" style="font-size: 0.75rem;">@(Model.Email ?? $"{Model.Role.ToLower()}@rentapp.com")</span>
+                </div>
+            </div>
+
+            <!-- Quick Logout or Home Link -->
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-secondary p-1 border-0" title="Exit to Home">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</aside>

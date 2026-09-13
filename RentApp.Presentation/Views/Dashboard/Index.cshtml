@@ -1,0 +1,202 @@
+@{
+    var previewRole = ViewData["PreviewRole"]?.ToString() ?? "Owner";
+    ViewData["Title"] = $"{previewRole} Dashboard";
+}
+
+<div class="dashboard-container">
+    <!-- Role-Based Sidebar ViewComponent -->
+    @await Component.InvokeAsync("Sidebar", new { role = previewRole })
+
+    <!-- Dashboard Main Area -->
+    <main class="dashboard-content">
+        <div class="container-fluid p-0">
+            <!-- Header Banner -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                <div>
+                    <h2 class="fw-bold mb-1">
+                        @if (string.Equals(previewRole, "Admin", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span>System Administrator Console</span>
+                        }
+                        else if (string.Equals(previewRole, "Renter", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span>Renter Hub</span>
+                        }
+                        else
+                        {
+                            <span>Owner & Host Portal</span>
+                        }
+                    </h2>
+                    <p class="text-muted mb-0">Manage listings, track rental operations, and review activity in real time.</p>
+                </div>
+
+                <!-- Quick Switcher in Header -->
+                <div class="btn-group shadow-sm bg-white rounded-pill p-1 border">
+                    <a href="?role=Owner" class="btn btn-sm rounded-pill px-3 @(string.Equals(previewRole, "Owner", StringComparison.OrdinalIgnoreCase) ? "btn-success text-white" : "btn-light text-secondary")">
+                        Owner View
+                    </a>
+                    <a href="?role=Admin" class="btn btn-sm rounded-pill px-3 @(string.Equals(previewRole, "Admin", StringComparison.OrdinalIgnoreCase) ? "btn-primary text-white" : "btn-light text-secondary")">
+                        Admin View
+                    </a>
+                    <a href="?role=Renter" class="btn btn-sm rounded-pill px-3 @(string.Equals(previewRole, "Renter", StringComparison.OrdinalIgnoreCase) ? "btn-info text-white" : "btn-light text-secondary")">
+                        Renter View
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Metric Cards -->
+            <div class="row g-3 mb-4">
+                @if (string.Equals(previewRole, "Admin", StringComparison.OrdinalIgnoreCase))
+                {
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">TOTAL USERS</span>
+                                    <h3 class="fw-bold my-1">1,248</h3>
+                                    <span class="badge bg-success-subtle text-success small">+12% this month</span>
+                                </div>
+                                <div class="p-3 bg-primary-subtle text-primary rounded-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">ACTIVE PROPERTIES</span>
+                                    <h3 class="fw-bold my-1">486</h3>
+                                    <span class="badge bg-warning-subtle text-warning-emphasis small">12 awaiting review</span>
+                                </div>
+                                <div class="p-3 bg-indigo-subtle text-indigo rounded-3" style="background:#e0e7ff; color:#4338ca;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">PLATFORM REVENUE</span>
+                                    <h3 class="fw-bold my-1">$48,920</h3>
+                                    <span class="badge bg-success-subtle text-success small">+18.4% growth</span>
+                                </div>
+                                <div class="p-3 bg-success-subtle text-success rounded-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">ACTIVE DISPUTES</span>
+                                    <h3 class="fw-bold my-1">3</h3>
+                                    <span class="badge bg-danger-subtle text-danger small">Requires attention</span>
+                                </div>
+                                <div class="p-3 bg-danger-subtle text-danger rounded-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">MY PROPERTIES</span>
+                                    <h3 class="fw-bold my-1">6</h3>
+                                    <span class="badge bg-success-subtle text-success small">All published</span>
+                                </div>
+                                <div class="p-3 bg-success-subtle text-success rounded-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">ACTIVE RENTALS</span>
+                                    <h3 class="fw-bold my-1">14</h3>
+                                    <span class="badge bg-primary-subtle text-primary small">3 pending requests</span>
+                                </div>
+                                <div class="p-3 bg-primary-subtle text-primary rounded-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="m9 16 2 2 4-4"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">MONTHLY EARNINGS</span>
+                                    <h3 class="fw-bold my-1">$5,820</h3>
+                                    <span class="badge bg-success-subtle text-success small">+8.5% vs last month</span>
+                                </div>
+                                <div class="p-3 bg-emerald-subtle text-emerald rounded-3" style="background:#d1fae5; color:#059669;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card border-0 shadow-sm rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="text-muted small fw-semibold">AVERAGE RATING</span>
+                                    <h3 class="fw-bold my-1">4.9 ★</h3>
+                                    <span class="badge bg-warning-subtle text-warning-emphasis small">48 reviews</span>
+                                </div>
+                                <div class="p-3 bg-warning-subtle text-warning rounded-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Detailed Content Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Role-Specific Sidebar Features</h5>
+                    <span class="badge bg-light text-dark border">Component: SidebarViewComponent</span>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded-3 bg-light-subtle h-100">
+                            <h6 class="fw-bold text-primary mb-2">Admin View Highlights</h6>
+                            <ul class="small mb-0 text-muted ps-3">
+                                <li><strong>Users & Roles</strong>: Manage user verification, assign roles, inspect account status.</li>
+                                <li><strong>Property Listings</strong>: Review pending property submissions and room/shop listings.</li>
+                                <li><strong>Categories & Amenities</strong>: Create and modify rental taxonomy.</li>
+                                <li><strong>Operations & Audits</strong>: Oversee platform bookings, transactions, payouts, and dispute resolution.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded-3 bg-light-subtle h-100">
+                            <h6 class="fw-bold text-success mb-2">Owner / Host View Highlights</h6>
+                            <ul class="small mb-0 text-muted ps-3">
+                                <li><strong>My Properties</strong>: Manage listings for rooms, houses, apartments, and shops.</li>
+                                <li><strong>Calendar & Availability</strong>: Block dates, manage rates and seasons.</li>
+                                <li><strong>Bookings & Inquiries</strong>: Accept/decline rental requests, review renter profiles.</li>
+                                <li><strong>Finances & Payouts</strong>: Track payouts, earnings per property, and download invoices.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

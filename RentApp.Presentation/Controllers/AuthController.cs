@@ -94,4 +94,17 @@ public class AuthController : Controller
         }
         return View(model);
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (Guid.TryParse(userIdClaim, out var userId))
+        {
+            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+            await _authService.LogoutAsync(userId, ipAddress);
+        }
+        return RedirectToAction("Index", "Home");
+    }
 }

@@ -29,3 +29,337 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* ==========================================================================
+   RentApp Modern Navbar & Profile ViewComponent Styles
+   ========================================================================== */
+.rentapp-navbar {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.75rem 0;
+  transition: all 0.3s ease;
+  z-index: 1030;
+}
+
+.rentapp-logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover .rentapp-logo-icon {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+.rentapp-brand-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #0d6efd 0%, #1e40af 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Navigation Links */
+.rentapp-nav-link {
+  color: #475569 !important;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.9rem !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rentapp-nav-link:hover {
+  color: #0d6efd !important;
+  background-color: #f1f5f9;
+}
+
+.rentapp-nav-link.active {
+  color: #0d6efd !important;
+  background-color: rgba(13, 110, 253, 0.08);
+  font-weight: 600;
+}
+
+.rentapp-nav-link .nav-icon {
+  transition: transform 0.2s ease;
+}
+
+.rentapp-nav-link:hover .nav-icon {
+  transform: translateY(-1px);
+}
+
+/* Circular Profile Avatar */
+.rentapp-profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.rentapp-avatar-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+}
+
+.rentapp-profile-btn:hover .rentapp-avatar-circle,
+.rentapp-profile-btn[aria-expanded="true"] .rentapp-avatar-circle {
+  transform: scale(1.08);
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.rentapp-avatar-circle-sm {
+  width: 36px;
+  height: 36px;
+}
+
+.rentapp-avatar-circle-lg {
+  width: 80px;
+  height: 80px;
+}
+
+.rentapp-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.rentapp-avatar-initials {
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.rentapp-avatar-icon {
+  stroke: #475569;
+}
+
+.rentapp-status-badge {
+  width: 11px;
+  height: 11px;
+  background-color: #10b981;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+/* Dropdown Menu */
+.rentapp-dropdown-menu {
+  min-width: 230px;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+  padding: 0.6rem !important;
+  margin-top: 0.65rem !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  background-color: #ffffff;
+}
+
+.rentapp-dropdown-menu .dropdown-item {
+  border-radius: 8px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  transition: all 0.15s ease;
+}
+
+.rentapp-dropdown-menu .dropdown-item:hover {
+  background-color: #f1f5f9;
+  color: #0d6efd;
+}
+
+.rentapp-dropdown-menu .dropdown-item:active {
+  background-color: #e2e8f0;
+}
+
+.rentapp-dropdown-menu .dropdown-item.text-danger:hover {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+.rentapp-logout-btn {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+/* ==========================================================================
+   RentApp Role-Based Sidebar ViewComponent Styles
+   ========================================================================== */
+.rentapp-sidebar {
+  width: 270px;
+  min-width: 270px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: calc(100vh - 72px);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-header {
+  background-color: #f8fafc;
+}
+
+.sidebar-role-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-role-title {
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+}
+
+/* Role Themes */
+.theme-admin {
+  --sidebar-accent: #4f46e5;
+  --sidebar-accent-bg: rgba(79, 70, 229, 0.08);
+}
+.theme-admin .icon-admin {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+.theme-owner {
+  --sidebar-accent: #059669;
+  --sidebar-accent-bg: rgba(5, 150, 105, 0.08);
+}
+.theme-owner .icon-owner {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.theme-renter {
+  --sidebar-accent: #0284c7;
+  --sidebar-accent-bg: rgba(2, 132, 199, 0.08);
+}
+.theme-renter .icon-renter {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+/* Nav Item Styling */
+.sidebar-group-title {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.sidebar-nav-item {
+  color: #475569;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.52rem 0.85rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  transition: all 0.18s ease;
+  text-decoration: none;
+}
+
+.sidebar-nav-item:hover {
+  color: var(--sidebar-accent, #0d6efd);
+  background-color: #f1f5f9;
+}
+
+.sidebar-nav-item.active {
+  color: var(--sidebar-accent, #0d6efd);
+  background-color: var(--sidebar-accent-bg, rgba(13, 110, 253, 0.08));
+  font-weight: 600;
+}
+
+.sidebar-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.sidebar-item-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.22rem 0.55rem;
+}
+
+/* Badges */
+.badge-role-admin {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}
+.badge-role-owner {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.badge-warning-custom {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+.badge-success-custom {
+  background-color: #dcfce7;
+  color: #166534;
+}
+.badge-primary-custom {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+.badge-info-custom {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Dashboard Shell Layout */
+.dashboard-container {
+  display: flex;
+  min-height: calc(100vh - 70px);
+}
+
+.dashboard-content {
+  flex: 1;
+  background-color: #f8fafc;
+  padding: 2rem;
+  overflow-y: auto;
+}

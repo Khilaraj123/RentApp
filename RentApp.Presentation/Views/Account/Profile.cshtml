@@ -1,0 +1,54 @@
+@model RentApp.Domain.Entities.Users.ApplicationUser
+
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+                <div class="bg-primary bg-gradient py-4 text-center text-white">
+                    <div class="rentapp-avatar-circle rentapp-avatar-circle-lg mx-auto mb-2 border border-3 border-white shadow">
+                        @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                        {
+                            <img src="@Model.ProfilePictureUrl" alt="@Model.FullName" class="rentapp-avatar-img" />
+                        }
+                        else
+                        {
+                            <span class="rentapp-avatar-initials fs-3">
+                                @((!string.IsNullOrEmpty(Model.FirstName) ? Model.FirstName[0].ToString() : "U") + 
+                                  (!string.IsNullOrEmpty(Model.LastName) ? Model.LastName[0].ToString() : ""))
+                            </span>
+                        }
+                    </div>
+                    <h3 class="mb-0 fw-bold">@Model.FullName</h3>
+                    <p class="mb-0 opacity-75 small">@Model.Email</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between px-0 py-3">
+                            <span class="text-muted">Username</span>
+                            <span class="fw-medium">@Model.UserName</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between px-0 py-3">
+                            <span class="text-muted">Email</span>
+                            <span class="fw-medium">@Model.Email</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between px-0 py-3">
+                            <span class="text-muted">Phone</span>
+                            <span class="fw-medium">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Not provided" : Model.PhoneNumber)</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between px-0 py-3">
+                            <span class="text-muted">Member Since</span>
+                            <span class="fw-medium">@Model.CreatedAtUtc.ToString("MMM yyyy")</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex justify-content-end">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
