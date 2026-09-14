@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
 
 namespace RentApp.Application.DTOs.Listings;
 
-public class ListingSearchDto
+public class ListingSearchDto : ListingFilterDto
 {
-    // TODO: Add properties
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public int? QuantityNeeded { get; set; }
 }

@@ -1,9 +1,12 @@
 using System;
-using System.Collections.Generic;
 
 namespace RentApp.Application.DTOs.Listings;
 
 public class ListingImageDto
 {
-    // TODO: Add properties
+    public Guid Id { get; set; }
+    public Guid ListingId { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
+    public bool IsPrimary { get; set; }
+    public int Order { get; set; }
 }

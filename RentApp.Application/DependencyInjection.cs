@@ -24,6 +24,10 @@ namespace RentApp.Application
                 }
             }
 
+            // Services & Helpers
+            services.AddScoped<RentApp.Application.Interfaces.Helpers.ISlugGenerator, RentApp.Application.Common.Helpers.SlugGenerator>();
+            services.AddScoped<RentApp.Application.Interfaces.Listings.IListingService, RentApp.Application.Services.Listings.ListingService>();
+
             return services;
         }
     }
